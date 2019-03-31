@@ -53,7 +53,7 @@ Alternatively, you may use the `value(for:key:observer)` method in
 `SwiftDefaults` as follows:
 
     // No observer:
-    let  myValue = swiftDefaults.value(for: self, key: "key")
+    let  myValue = swiftDefaults.value(for: Int.self, key: "key")
 
     // With observer:
     let myValue = swiftDefaults.value(for: Int.self, key: "key") {
@@ -107,8 +107,8 @@ until the next call to `destroy`.
 
     let value1 = swiftDefaults.value(for: Int.self, key: "key")
     
-    // The next line fails, runtime fatal error:
-    let value2 = swiftDefaults.value(for: UInt.self, key: "key")
+    // The next line fails with a runtime fatal error:
+    // let value2 = swiftDefaults.value(for: UInt.self, key: "key")
     
     // The next line is valid, as it matches the type of value1:
     let value3 = swiftDefaults.value(for: Int.self, key: "key")
@@ -123,7 +123,7 @@ until the next call to `destroy`.
     let value4 = swiftDefaults.value(for: UInt.self, key: "key")
     
     // Fails, as "key" must now be UInt:
-    let value5 = swiftDefaults.value(for: Int.self, key: "key")
+    // let value5 = swiftDefaults.value(for: Int.self, key: "key")
 
 ## Observers
 
@@ -162,6 +162,32 @@ best to call the `invalidate` method to ensure that the strong reference to the
 
     myValue.observer = nil  // removes the observer
     myValue.invalidate()    // Same as previous statement
+
+## Default Values
+
+Since `UserDefaults` values are, by deinition, optional, the values themselves are
+optional (if the value stored within `UserDefaults` is not found or a type that does not
+match the type expected, the value is set to `nil`).
+
+It is sometimes useful to "prime" `UserDefaults` with a default value, especially for
+the first time your app is run. It also makes it easy for type safety not to have to
+continuously unwrap the value as an optional.
+
+The `SwiftDefaults.DefaultedValue` class can be used in those cases where
+a `nil` value is just not wanted. The value can be created by specifying the default
+value to be used in case the underlying `Value` type is nil:
+
+    myDefaultValue = swiftDefaults.defaultValue("My string",
+                                                for: "key")
+
+This example will assign `myDefaultValue` as the `String` `UserDefaults` value
+for the key "key". If there is no underlying value, or if the value stored in `UserDefaults`
+is not a `String` property, the value "My string" will be used.
+
+A `DefaultValue.value` is not optional; it will always have a value, and thus does
+not need to be unwrapped.
+
+    let foo = myDefaultValue.value // String, not String?
 
 ## Debugging
 
@@ -215,10 +241,12 @@ a `NativeType`.
 This converter converts between an object that conforms to the `Codable` protocol
 and a `Data` object containing a JSON representation of the codable object.
 
-    struct Foo : Codable : CustomStringConvertible {
+    struct Foo : Codable, CustomStringConvertible {
         let a : Int
         let b: String
-        let description = "a:\(a), b:\(b)" 
+        var description : String {
+            return "a:\(a), b:\(b)"
+        }
     }
     let myValue = swiftDefaults.convertible(for: Foo.self,
                                             key: "key")
@@ -348,10 +376,7 @@ the `SwiftDefaults` base class for this framework and put all the code within th
 
 # Future Directions (ideas)
 
-* Prevent "shadowing" `Value` types: Keep a list of existing `Value` key and the
-`ValueType` used for each. Reuse existing `Value` objects rather than allowing
-
-* Add support for allowing multiple observers 
+* Add support for allowing multiple observers.
 # Installation
 
 This was never intended to be a standalone framework, but it currently works as such.

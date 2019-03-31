@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol _SwiftDefaultsConvertibleProtocol
-: _SwiftDefaultsValueProtocol, TextOutputStreamable {
+: SwiftDefaults.OptionalValueProtocol, TextOutputStreamable {
 	associatedtype ValueType
 	associatedtype InternalType : _SwiftDefaultsNativeType
 	
@@ -59,6 +59,12 @@ public extension _SwiftDefaultsConvertibleProtocol {
 			self.observer?(key, self.value)
 		}
 	}
+    
+    func destroy() {
+        invalidate()
+        remove()
+        native.destroy()
+    }
 }
 
 public extension _SwiftDefaultsConvertibleProtocol {

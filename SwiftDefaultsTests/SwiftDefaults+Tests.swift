@@ -482,4 +482,28 @@ class SwiftDefaults_Tests: XCTestCase {
         
         XCTAssertEqual(override1, override2)
     }
+    
+    func testDefaultedValue() {
+        let value = swiftDefaults
+            .defaultValue(Int(16), for: ourKey)
+        var count = 0
+        let observer : (Any,Any)->Void = { (_, _) in
+            count += 1
+        }
+        value.observer = observer
+        let value1 = -20
+        let value2 = 30
+        let value3 = Int.max
+        XCTAssertEqual(value.key, ourKey)
+        XCTAssertEqual(value.defaults, .standard)
+        value.observer = observer
+        value.value = value1
+        XCTAssertEqual(value.value, value1)
+        value << value2
+        XCTAssertEqual(value.value, value2)
+        value.invalidate()
+        value << value3
+        XCTAssertEqual(value.value, value3)
+        XCTAssertEqual(count, 2)
+    }
 }

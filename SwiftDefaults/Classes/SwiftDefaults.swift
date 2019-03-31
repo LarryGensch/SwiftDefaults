@@ -24,15 +24,17 @@ public class SwiftDefaults {
         let except = Set(except ?? [String]())
         objc_sync_enter(keyValueSync)
         defer { objc_sync_exit(keyValueSync) }
-        Set(keyValueTypes.keys).subtracting(except).forEach {
-            print("REMOVING VALUETYPE FOR \($0)-\(keyValueTypes[$0])")
-            defaults.removeObject(forKey: $0)
-            keyValueTypes.removeValue(forKey: $0)
+        Set(keyValueTypes.keys)
+            .subtracting(except)
+            .forEach {
+                defaults.removeObject(forKey: $0)
+                keyValueTypes.removeValue(forKey: $0)
         }
-        Set(keyValues.keys).subtracting(except).forEach {
-            print("REMOVING HASH FOR \($0)")
-            defaults.removeObject(forKey: $0)
-            keyValues.removeValue(forKey: $0)
+        Set(keyValues.keys)
+            .subtracting(except)
+            .forEach {
+                defaults.removeObject(forKey: $0)
+                keyValues.removeValue(forKey: $0)
         }
     }
 

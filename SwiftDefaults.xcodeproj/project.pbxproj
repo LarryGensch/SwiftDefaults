@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E03AEC77224529E2001DABF1 /* SwiftDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E03AEC6D224529E2001DABF1 /* SwiftDefaults.framework */; };
-		E03AEC7C224529E2001DABF1 /* UserDefaults+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC7B224529E2001DABF1 /* UserDefaults+Tests.swift */; };
+		E03AEC7C224529E2001DABF1 /* SwiftDefaults+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC7B224529E2001DABF1 /* SwiftDefaults+Tests.swift */; };
 		E03AEC7E224529E2001DABF1 /* SwiftDefaults.h in Headers */ = {isa = PBXBuildFile; fileRef = E03AEC70224529E2001DABF1 /* SwiftDefaults.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E03AEC9022452AC8001DABF1 /* ValueConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8822452AC8001DABF1 /* ValueConverter.swift */; };
 		E03AEC9122452AC8001DABF1 /* ConvertibleProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8922452AC8001DABF1 /* ConvertibleProtocol.swift */; };
@@ -20,6 +20,7 @@
 		E04294222245660200B9AA6D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = E04294212245660200B9AA6D /* README.md */; };
 		E04294242245660C00B9AA6D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = E04294232245660C00B9AA6D /* LICENSE */; };
 		E04294272245B58300B9AA6D /* SwiftDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04294262245B58300B9AA6D /* SwiftDefaults.swift */; };
+		E0429443224FD7A100B9AA6D /* DefaultedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0429442224FD7A100B9AA6D /* DefaultedValue.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +38,7 @@
 		E03AEC70224529E2001DABF1 /* SwiftDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftDefaults.h; sourceTree = "<group>"; };
 		E03AEC71224529E2001DABF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E03AEC76224529E2001DABF1 /* SwiftDefaultsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftDefaultsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E03AEC7B224529E2001DABF1 /* UserDefaults+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Tests.swift"; sourceTree = "<group>"; };
+		E03AEC7B224529E2001DABF1 /* SwiftDefaults+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftDefaults+Tests.swift"; sourceTree = "<group>"; };
 		E03AEC7D224529E2001DABF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E03AEC8822452AC8001DABF1 /* ValueConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueConverter.swift; sourceTree = "<group>"; };
 		E03AEC8922452AC8001DABF1 /* ConvertibleProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConvertibleProtocol.swift; sourceTree = "<group>"; };
@@ -49,6 +50,7 @@
 		E04294212245660200B9AA6D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		E04294232245660C00B9AA6D /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = SOURCE_ROOT; };
 		E04294262245B58300B9AA6D /* SwiftDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDefaults.swift; sourceTree = "<group>"; };
+		E0429442224FD7A100B9AA6D /* DefaultedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultedValue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,7 +105,7 @@
 		E03AEC7A224529E2001DABF1 /* SwiftDefaultsTests */ = {
 			isa = PBXGroup;
 			children = (
-				E03AEC7B224529E2001DABF1 /* UserDefaults+Tests.swift */,
+				E03AEC7B224529E2001DABF1 /* SwiftDefaults+Tests.swift */,
 				E03AEC7D224529E2001DABF1 /* Info.plist */,
 			);
 			path = SwiftDefaultsTests;
@@ -114,6 +116,7 @@
 			children = (
 				E03AEC8B22452AC8001DABF1 /* Convertibles */,
 				E03AEC8922452AC8001DABF1 /* ConvertibleProtocol.swift */,
+				E0429442224FD7A100B9AA6D /* DefaultedValue.swift */,
 				E03AEC8A22452AC8001DABF1 /* NativeType.swift */,
 				E04294262245B58300B9AA6D /* SwiftDefaults.swift */,
 				E03AEC8F22452AC8001DABF1 /* Value.swift */,
@@ -244,6 +247,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E03AEC9422452AC8001DABF1 /* EnumValue.swift in Sources */,
+				E0429443224FD7A100B9AA6D /* DefaultedValue.swift in Sources */,
 				E03AEC9222452AC8001DABF1 /* NativeType.swift in Sources */,
 				E03AEC9622452AC8001DABF1 /* Value.swift in Sources */,
 				E03AEC9522452AC8001DABF1 /* CodableValue.swift in Sources */,
@@ -258,7 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E03AEC7C224529E2001DABF1 /* UserDefaults+Tests.swift in Sources */,
+				E03AEC7C224529E2001DABF1 /* SwiftDefaults+Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

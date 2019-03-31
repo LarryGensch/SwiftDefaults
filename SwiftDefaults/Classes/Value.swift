@@ -14,36 +14,58 @@ public protocol _SwiftDefaultsValueProtocol
 : AnyObject {
 	associatedtype ValueType
 	
-	/// Signature for an observer to be called if/when the value is changed
-	typealias Observer = (String, ValueType?)->Void
-	
 	/// The key used for storing the value in UserDefaults
 	var key : String { get }
-	
-	/// The value associated with this class
-	var value : ValueType? { get set }
 	
     /// A description to use for debugging. If set, overrides
     /// default description used by eg. `print`.
     var defaultDescription : String? { get set }
 
-	/// The observer to be notified if/when the `value` is changed
-	var observer : Observer? { get set }
-	
-	/// Remove the value from UserDefaults (equivalent to setting
-	/// the value to nil)
-	func remove()
-	
 	/// Remove all references to the `observer`. After calling,
 	/// no observer will be called if/when the value changes
 	/// until a new `observer` is set for this object.
 	func invalidate()
+    
+    /// Destroy this value and any other value shadowing it.
+    /// After this method is called, accessing the `value` or
+    /// `observer` property is not allowed and will result in
+    /// runtime error
+    func destroy()
 }
 
-public extension _SwiftDefaultsValueProtocol {
+public protocol _SwiftDefaultsOptionalValueProtocol
+: _SwiftDefaultsValueProtocol {
+    /// Signature for an observer to be called if/when the value is changed
+    typealias ObserverCallback = (String, ValueType?)->Void
+    
+    var value : ValueType? { get set }
+    var observer : ObserverCallback? { get set }
+
+    /// Remove the value from UserDefaults (equivalent to setting
+    /// the value to nil)
+    func remove()
+}
+
+public protocol _SwiftDefaultsDefaultValueProtocol
+: _SwiftDefaultsValueProtocol {
+    /// Signature for an observer to be called if/when the value is changed
+    typealias ObserverCallback = (String, ValueType)->Void
+    
+    var value : ValueType { get set }
+    var observer : ObserverCallback? { get set }
+}
+
+public extension _SwiftDefaultsOptionalValueProtocol {
     var baseDescription : String {
         let type = String(describing: ValueType.self)
-        return "Value<\(type)>(key: \"\(key)\")"
+        return "Value<\(type)?>(key: \"\(key)\")"
+    }
+}
+
+public extension _SwiftDefaultsDefaultValueProtocol {
+    var baseDescription : String {
+        let type = String(describing: ValueType.self)
+        return "Value<\(type)!>(key: \"\(key)\")"
     }
 }
 
@@ -51,10 +73,12 @@ private var _context = UInt8(0)
 
 public extension SwiftDefaults {
 	typealias ValueProtocol = _SwiftDefaultsValueProtocol
+    typealias OptionalValueProtocol = _SwiftDefaultsOptionalValueProtocol
+    typealias DefaultValueProtocol = _SwiftDefaultsDefaultValueProtocol
 
 	/// ValueProtocol implementation for UserDefaults keys with
 	/// values that UserDefaults natively supports.
-	class Value<T> : NSObject, ValueProtocol, TextOutputStreamable
+	class Value<T> : NSObject, OptionalValueProtocol, TextOutputStreamable
     where T: NativeType {
 		public typealias ValueType = T
 		
@@ -88,7 +112,7 @@ public extension SwiftDefaults {
         private let swiftDefaults : SwiftDefaults
 		
 		/// An observer to call when changes are made to the value
-        public var observer: Observer? {
+        public var observer: ObserverCallback? {
             didSet {
                 if isInvalid && (observer != nil) {
                     observer = nil
@@ -201,7 +225,7 @@ public extension SwiftDefaults {
     
 	func value<T: NativeType>(for type: T.Type,
 							  key: String,
-							  observer: Value<T>.Observer? = nil) -> Value<T> {
+							  observer: Value<T>.ObserverCallback? = nil) -> Value<T> {
         return Value<T>(key: key,
                         defaults: self,
                         observer: observer)

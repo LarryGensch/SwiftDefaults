@@ -57,6 +57,7 @@ public extension SwiftDefaults {
 	}
 }
 
-public func << <T>(lhs: SwiftDefaults.EnumValue<T>, rhs: T) {
+public func << <T>(lhs: SwiftDefaults.EnumValue<T>,
+                   rhs: T) {
 	lhs.value = rhs
 }

@@ -80,6 +80,7 @@ public extension SwiftDefaults {
 	}
 }
 
-public func << <T>(lhs: SwiftDefaults.CodableValue<T>, rhs: T) {
+public func << <T>(lhs: SwiftDefaults.CodableValue<T>,
+                   rhs: T) {
 	lhs.value = rhs
 }
