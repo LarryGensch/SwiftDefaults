@@ -376,10 +376,76 @@ great idea, especially as I added more support for useful transformed values.
 ## Failable Initializers
 
 When I initially wrote this framework, I used runtime errors when a `Value` object failed
-to initialize properly. I didn't like that decision, so I considered using either  throwable initializers
-or failable initializers, and decided to go with the latter, although I could possibly be convinced
-to reconsider this sometime in the future. This allows the code to optionally detect if something
-went wrong and prevent the runtime error from happening.
+to initialize properly. The only actual issue was that a `Value` would be created
+that shadowed a previously created `Value` object with a different type. That was the
+only failure mode. Addressing this with an `assert()` could bring up any issues in
+development and allow clients to not worry about possible runtime errors happening
+within the framework, or having to unwrap or attempt to catch exceptions when this
+happened.
+
+Truth be told, if you design your app properly, you shouldn't have to worry about this
+except during development time, in which case you can trace the runtime exception
+and fix the code before moving it into production.
+
+However, this didn't seem like a "correct" thing to do.
+
+The "right" thing would to indicate to the client that something went wrong, and
+allow the client to decide how to handle the error.
+
+There are two approaches to handling this from a framework's point of view:
+
+1. Throw an exception indicating precisely what the error is so it can be reported
+to the person that needs to know how to fix it
+2. Make the initializer failable, and let the client know that _for some reason_, the
+`Value` object could not be intantiated
+
+The problem with the first approach is that each time you create a value, you need
+to take into consideration that an exception may be thrown. That leads to verbose
+code as the following:
+
+    do {
+        let myValue = try SwiftDefaults.NativeValue<Int>(key: key,
+                                                         defaults: defaults,
+                                                         observer: nil)
+    } catch {
+        // handle the exception
+    }
+
+That seems terribly verbose. However, that could be shortened to:
+
+    let myValue = try! SwiftDefaults.NativeValue<Int>(key: key,
+                                                      defaults: defaults,
+                                                      observer: nil)
+
+And we one again, have a runtime error.
+
+Of course, changing the `try!` to a `try?` in the above example would allow us to use
+optional chaining to, perhaps put the `let` statement into a `guard` or `if let`
+clause.
+
+I thought about this, and actually started to implement a rewrite using exceptions,
+but I considered this overkill. Why? Because there was only one condition that would
+cause the exception to be thrown: When a shadow `Value` object for a key was
+associated with a differing type than the existing `Value` object for the same key.
+
+Since there was only one failure reason, it made sent to me that instead of having
+an initializer that throws an exception, simply use a failable initializer, which would
+be equivalent to the `try?` for optional chaining:
+
+    let myValue = SwiftDefaults.NativeValue<Int>(key: key,
+                                                 defaults: defaults,
+                                                 observer: nil)
+
+Now, `myValue` is an optional `Value` object, and using `if let` or `guard let`, we
+can handle the error, usually at development/test time. This simplifies the general
+case.
+
+Of course, if a future version of this framework presents a second failure option,
+it might be a good idea to reconsider redesigning the framework to use exceptions
+instead.
+
+I'm willing to entertain other people's thoughts on the current design.
+
 # Future Directions (ideas)
 
 * Add support for allowing multiple observers for a single `Value` object
@@ -390,12 +456,14 @@ This was never intended to be a standalone framework, but it currently works as 
 With a little effort, this could be improved to create "fat" frameworks instead of requiring
 separate frameworks for each build configuration.
 
+To use this framework with an existing project, here are the steps required:
+
 1. Add `SwiftDefaults` as a submodule with:
 
         $ git submodule add <this-repository-url>
 
 2. Open the `SwiftDefaults` folder, and drag the `.xcodeproj` file into your app's project. This needs to be added
-somewhere within your target project to have it in your dependencies.
+somewhere within your target project to allow it to be accessible in your dependencies.
 
 3. In your target's `Build Phases` panel, add the `SwifDefaults.framework` to the `Target Dependencies`
 
