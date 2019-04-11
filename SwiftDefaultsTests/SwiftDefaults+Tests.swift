@@ -32,15 +32,19 @@ class SwiftDefaults_Tests: XCTestCase {
     }
     
     func testAutoReset1() {
-        let value = swiftDefaults.value(for: Int.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+        guard let value = swiftDefaults.value(for: Int.self, key: ourKey) else {
+            XCTFail()
+            return
+        }
         XCTAssertNil(value.value)
         value << 20
     }
     
     func testAutoReset2() {
-        let value = swiftDefaults.value(for: String.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+        guard let value = swiftDefaults.value(for: String.self, key: ourKey) else {
+            XCTFail()
+            return
+        }
         XCTAssertNil(value.value)
         value << "Foo"
     }
@@ -88,13 +92,14 @@ class SwiftDefaults_Tests: XCTestCase {
         XCTAssertTrue(rc, message ?? "No message!")
     }
     
-    func nativeTest<T>(value: SwiftDefaults.Value<T>,
+    func nativeTest<T>(value: SwiftDefaults.NativeValue<T>,
                        value1: T,
                        value2: T,
                        value3: T)
         where T: Equatable {
             var count = 0
             let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
                 count += 1
             }
             XCTAssertEqual(value.key, ourKey)
@@ -102,22 +107,25 @@ class SwiftDefaults_Tests: XCTestCase {
             value.observer = observer
             value.value = value1
             XCTAssertEqual(value.value, value1)
-            value.value = nil
+            value.remove()
             XCTAssertNil(value.value)
             value << value2
             XCTAssertEqual(value.value, value2)
             value.invalidate()
             value << value3
             XCTAssertEqual(value.value, value3)
+            waitForTimeout(1)
             XCTAssertEqual(count, 3)
     }
     
     func testUInt8() {
-        let value = SwiftDefaults.Value<UInt8>(
+        guard let value = SwiftDefaults.NativeValue<UInt8>(
             key: ourKey,
             defaults: swiftDefaults,
-            observer: nil)
-        XCTAssertFalse(value.isInvalid)
+            observer: nil) else {
+                XCTFail()
+                return
+        }
         nativeTest(value: value,
                    value1: 0,
                    value2: 4,
@@ -125,11 +133,13 @@ class SwiftDefaults_Tests: XCTestCase {
     }
     
     func testInt8() {
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .value(for: Int8.self,
-                   key: ourKey)
-        XCTAssertFalse(value.isInvalid)
-
+                   key: ourKey) else {
+                    XCTFail()
+                    return
+        }
+        
         nativeTest(value: value,
                    value1: 0,
                    value2: -4,
@@ -137,10 +147,12 @@ class SwiftDefaults_Tests: XCTestCase {
     }
     
     func testString() {
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .value(for: String.self,
-                   key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+                   key: ourKey) else {
+                    XCTFail()
+                    return
+        }
         nativeTest(value: value,
                    value1: "This is a test",
                    value2: "Dang it!",
@@ -148,10 +160,12 @@ class SwiftDefaults_Tests: XCTestCase {
     }
     
     func testDate() {
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .value(for: Date.self,
-                   key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+                   key: ourKey) else {
+                    XCTFail()
+                    return
+        }
         nativeTest(value: value,
                    value1: Date(),
                    value2: Date(timeIntervalSince1970: 2000),
@@ -163,10 +177,12 @@ class SwiftDefaults_Tests: XCTestCase {
         let array2 = [ 1, 3, 5 ]
         let array3 = [ -2, -4 ]
         XCTAssertTrue(array1 is SwiftDefaults.NativeType)
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .value(for: type(of: array1),
-                   key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+                   key: ourKey) else {
+                    XCTFail()
+                    return
+        }
         nativeTest(value: value,
                    value1: array1,
                    value2: array2,
@@ -178,10 +194,12 @@ class SwiftDefaults_Tests: XCTestCase {
         let dict2 = [ "key" : 4 ]
         let dict3 = [String:Int]()
         XCTAssertTrue(dict1 is SwiftDefaults.NativeType)
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .value(for: type(of: dict1),
-                   key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+                   key: ourKey) else {
+                    XCTFail()
+                    return
+        }
         nativeTest(value: value,
                    value1: dict1,
                    value2: dict2,
@@ -198,11 +216,14 @@ class SwiftDefaults_Tests: XCTestCase {
         let value3 = Foo(a: -5, b: "minus five")
         
         XCTAssertFalse(value1 is SwiftDefaults.NativeType)
-        let value = swiftDefaults
-            .convertible(for: Foo.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+        guard let value = swiftDefaults
+            .codableValue(for: Foo.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
         }
         value.observer = observer
@@ -217,21 +238,23 @@ class SwiftDefaults_Tests: XCTestCase {
         value.invalidate()
         value << value3
         XCTAssertEqual(value.value, value3)
+        waitForTimeout(1)
         XCTAssertEqual(count, 3)
-        
-        
     }
     
     func testEnum1() {
         enum Foo1 : String {
             case foo, bar
         }
-        let value = swiftDefaults
-            .convertible(for: Foo1.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
-
+        guard let value = swiftDefaults
+            .enumValue(for: Foo1.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
+        
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
         }
         value.observer = observer
@@ -246,6 +269,7 @@ class SwiftDefaults_Tests: XCTestCase {
         value.invalidate()
         value << .foo
         XCTAssertEqual(value.value, .foo)
+        waitForTimeout(1)
         XCTAssertEqual(count, 3)
     }
     
@@ -253,12 +277,14 @@ class SwiftDefaults_Tests: XCTestCase {
         enum Foo1 : Int {
             case foo, bar
         }
-        let value = swiftDefaults
-            .convertible(for: Foo1.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
-
+        guard let value = swiftDefaults
+            .enumValue(for: Foo1.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
         }
         value.observer = observer
@@ -273,6 +299,7 @@ class SwiftDefaults_Tests: XCTestCase {
         value.invalidate()
         value << .foo
         XCTAssertEqual(value.value, .foo)
+        waitForTimeout(1)
         XCTAssertEqual(count, 3)
     }
     
@@ -281,12 +308,15 @@ class SwiftDefaults_Tests: XCTestCase {
             var a: Int
             var b: String
         }
-        let value = swiftDefaults
-            .convertible(for: Foo.self,
-                         key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+        guard let value = swiftDefaults
+            .codableValue(for: Foo.self,
+                          key: ourKey) else {
+                            XCTFail()
+                            return
+        }
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
         }
         value.observer = observer
@@ -304,21 +334,27 @@ class SwiftDefaults_Tests: XCTestCase {
         let value3 = Foo(a: -5, b: "minus five")
         value << value3
         XCTAssertEqual(value.value, value3)
+        waitForTimeout(1)
         XCTAssertEqual(count, 3)
     }
     
     func testShadow() {
-        let value = swiftDefaults
-            .value(for: String.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
-        let shadow = swiftDefaults
-            .value(for: String.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+        guard let value = swiftDefaults
+            .value(for: String.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
+        guard let shadow = swiftDefaults
+            .value(for: String.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
         let badShadow = swiftDefaults
             .value(for: Int.self, key: ourKey)
-        XCTAssertTrue(badShadow.isInvalid)
-        badShadow.observer = { (_,_) in  }
-        XCTAssertNil(badShadow.observer)
+        XCTAssertNil(badShadow)
+        badShadow?.observer = { (_,_) in  }
+        XCTAssertNil(badShadow?.observer)
+        
         var vCount = 0
         var sCount = 0
         value.observer = { (key, value) in
@@ -340,10 +376,11 @@ class SwiftDefaults_Tests: XCTestCase {
         XCTAssertEqual(value.value, "Bar")
         XCTAssertEqual(shadow.value, "Bar")
         XCTAssertEqual(vCount, sCount)
+        waitForTimeout(1)
         XCTAssertEqual(vCount, 3)
         shadow.destroy()
-        XCTAssertTrue(shadow.isInvalid)
-        XCTAssertTrue(value.isInvalid)
+        XCTAssertTrue(shadow.isDestroyed())
+        XCTAssertTrue(value.isDestroyed())
     }
     
     func testArrayEnumString() {
@@ -355,19 +392,23 @@ class SwiftDefaults_Tests: XCTestCase {
         }
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
+            print("Count is now \(count)")
         }
         
         let value1 : [Foo] = [ .a, .c, .e ]
         let value2 : [Foo] = [ .b, .d ]
         let value3 : [Foo] = [ .a, .b, .c, .d, .e ]
         
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .enumArray(for: Foo.self,
                        key: ourKey,
-                       observer: observer)
-        XCTAssertFalse(value.isInvalid)
-
+                       observer: observer) else {
+                        XCTFail()
+                        return
+        }
+        
         XCTAssertEqual(value.key, ourKey)
         XCTAssertEqual(value.defaults, .standard)
         value.value = value1
@@ -379,6 +420,7 @@ class SwiftDefaults_Tests: XCTestCase {
         value.invalidate()
         value << value3
         XCTAssertEqual(value.value, value3)
+        waitForTimeout(1)
         XCTAssertEqual(count, 3)
     }
     
@@ -388,6 +430,7 @@ class SwiftDefaults_Tests: XCTestCase {
         }
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
         }
         
@@ -395,12 +438,14 @@ class SwiftDefaults_Tests: XCTestCase {
         let value2 : [Foo] = [ .b, .d ]
         let value3 : [Foo] = [ .a, .b, .c, .d, .e ]
         
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .enumArray(for: Foo.self,
                        key: ourKey,
-                       observer: observer)
-        XCTAssertFalse(value.isInvalid)
-
+                       observer: observer) else {
+                        XCTFail()
+                        return
+        }
+        
         XCTAssertEqual(value.key, ourKey)
         XCTAssertEqual(value.defaults, .standard)
         value.value = value1
@@ -412,6 +457,7 @@ class SwiftDefaults_Tests: XCTestCase {
         value.invalidate()
         value << value3
         XCTAssertEqual(value.value, value3)
+        waitForTimeout(1)
         XCTAssertEqual(count, 3)
     }
     
@@ -420,12 +466,15 @@ class SwiftDefaults_Tests: XCTestCase {
             var a: Int
             var b: String
         }
-        let value = swiftDefaults
+        guard let value = swiftDefaults
             .codableArray(for: Foo.self,
-                          key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+                          key: ourKey) else {
+                            XCTFail()
+                            return
+        }
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
         }
         value.observer = observer
@@ -445,13 +494,16 @@ class SwiftDefaults_Tests: XCTestCase {
         value.invalidate()
         value << value3
         XCTAssertEqual(value.value, value3)
+        waitForTimeout(1)
         XCTAssertEqual(count, 3)
     }
     
     func testDefaultDescription1() {
-        let value = swiftDefaults
-            .value(for: Int.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
+        guard let value = swiftDefaults
+            .value(for: Int.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
         
         let base1 = value.baseDescription
         let base2 = "\(value)"
@@ -461,6 +513,7 @@ class SwiftDefaults_Tests: XCTestCase {
         value.defaultDescription = override1
         let override2 = "\(value)"
         
+        waitForTimeout(1)
         XCTAssertEqual(override1, override2)
     }
     
@@ -468,10 +521,12 @@ class SwiftDefaults_Tests: XCTestCase {
         enum Foo : String {
             case foo, bar
         }
-        let value = swiftDefaults
-            .convertible(for: Foo.self, key: ourKey)
-        XCTAssertFalse(value.isInvalid)
-
+        guard let value = swiftDefaults
+            .enumValue(for: Foo.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
+        
         let base1 = value.baseDescription
         let base2 = "\(value)"
         XCTAssertEqual(base1, base2)
@@ -480,14 +535,27 @@ class SwiftDefaults_Tests: XCTestCase {
         value.defaultDescription = override1
         let override2 = "\(value)"
         
+        waitForTimeout(1)
         XCTAssertEqual(override1, override2)
     }
-    
+
+    func waitForTimeout(_ timeout: TimeInterval) {
+        let timeExpectation = expectation(description: "Time!")
+        DispatchQueue.main.asyncAfter(deadline: .now() + timeout) {
+            timeExpectation.fulfill()
+        }
+        wait(for: [timeExpectation], timeout: timeout + 0.5)
+    }
+
     func testDefaultedValue() {
-        let value = swiftDefaults
-            .defaultValue(Int(16), for: ourKey)
+        guard let value = swiftDefaults
+            .defaultValue(Int(16), for: ourKey) else {
+                XCTFail()
+                return
+        }
         var count = 0
         let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
             count += 1
         }
         value.observer = observer
@@ -496,7 +564,6 @@ class SwiftDefaults_Tests: XCTestCase {
         let value3 = Int.max
         XCTAssertEqual(value.key, ourKey)
         XCTAssertEqual(value.defaults, .standard)
-        value.observer = observer
         value.value = value1
         XCTAssertEqual(value.value, value1)
         value << value2
@@ -504,6 +571,131 @@ class SwiftDefaults_Tests: XCTestCase {
         value.invalidate()
         value << value3
         XCTAssertEqual(value.value, value3)
+        waitForTimeout(1)
         XCTAssertEqual(count, 2)
+    }
+
+    /// Three levels of indirection:
+    /// - NativeValue : String?
+    /// - EnumValue : Foo?
+    /// - DefaultedValue : Foo
+    /// The observer must be called on the main thread
+    func testObserverOnMainThread() {
+        enum Foo : String {
+            case foo, bar, zot
+        }
+        guard let proxy = swiftDefaults
+            .enumValue(for: Foo.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
+        var count = 0
+        let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssert(Thread.current.isMainThread)
+            count += 1
+        }
+        guard let value = swiftDefaults.defaulted(proxy: proxy.erased(), defaultValue: .zot) else {
+            XCTFail()
+            return
+        }
+        value.observer = observer
+        let bgExpectation = expectation(description: "Background Thread")
+
+        DispatchQueue.global(qos: .background).async {
+            let value1 = Foo.bar
+            let value2 = Foo.foo
+            let value3 = Foo.zot
+            XCTAssertEqual(value.key, self.ourKey)
+            XCTAssertEqual(value.defaults, .standard)
+            value.observer = observer
+            value.value = value1
+            XCTAssertEqual(value.value, value1)
+            value << value2
+            XCTAssertEqual(value.value, value2)
+            value.invalidate()
+            value << value3
+            XCTAssertEqual(value.value, value3)
+            bgExpectation.fulfill()
+        }
+        wait(for: [bgExpectation], timeout: 60)
+        XCTAssertEqual(count, 2)
+    }
+
+    /// Three levels of indirection:
+    /// - NativeValue : String?
+    /// - EnumValue : Foo?
+    /// - DefaultedValue : Foo
+    /// The observer must be called on the main thread
+    func testObserverOnBGThread() {
+        enum Foo : String {
+            case foo, bar, zot
+        }
+        guard let proxy = swiftDefaults
+            .enumValue(for: Foo.self, key: ourKey) else {
+                XCTFail()
+                return
+        }
+        let bgQueue = DispatchQueue.global(qos: .background)
+
+        var count = 0
+        let observer : (Any,Any)->Void = { (_, _) in
+            XCTAssertFalse(Thread.current.isMainThread)
+            count += 1
+        }
+        guard let value = swiftDefaults.defaulted(proxy: proxy.erased(), defaultValue: .zot) else {
+            XCTFail()
+            return
+        }
+        value.observer = observer
+        value.observerQueue = bgQueue
+        let bgExpectation = expectation(description: "Background Thread")
+
+        bgQueue.async {
+            let value1 = Foo.bar
+            let value2 = Foo.foo
+            let value3 = Foo.zot
+            XCTAssertEqual(value.key, self.ourKey)
+            XCTAssertEqual(value.defaults, .standard)
+            value.observer = observer
+            value.value = value1
+            XCTAssertEqual(value.value, value1)
+            value << value2
+            XCTAssertEqual(value.value, value2)
+            value.invalidate()
+            value << value3
+            XCTAssertEqual(value.value, value3)
+            bgExpectation.fulfill()
+        }
+        wait(for: [bgExpectation], timeout: 5)
+        XCTAssertEqual(count, 2)
+    }
+
+    class MyCoder : SwiftDefaults.Coder {
+        func encode<T>(_ value: T) throws -> Data where T : Encodable {
+            // ...
+        }
+
+        func decode<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
+            // ...
+        }
+    }
+
+    func other() {
+        struct Foo : Codable {
+            var a: Int
+            var b: String
+        }
+        let coderType = SwiftDefaults.CoderType.custom(encoder: { (value) -> Data in
+            // ...
+            return Data()
+        },
+                                                       decoder: { (type, data) -> Foo in
+            // ...
+            return Foo(a: 1, b: "")
+        })
+        let value = swiftDefaults
+            .codableValue(for: Foo.self,
+                          key: "key",
+                          coderType: coderType)
     }
 }

@@ -2,85 +2,45 @@
 //  DefaultedValue.swift
 //  SwiftDefaults
 //
-//  Created by Larry Gensch on 3/30/19.
+//  Created by Larry Gensch on 4/6/19.
 //  Copyright © 2019 Larry Gensch. All rights reserved.
 //
 
 import Foundation
 
 public extension SwiftDefaults {
-    class DefaultedValue<T: NativeType> : DefaultValueProtocol {
-        public typealias ValueType = T
-        
-        public var key: String {
-            return proxyValue.key
-        }
-        
-        public var value: T {
-            set {
-                proxyValue.value = newValue
-            }
-            get {
-                return proxyValue.value ?? defaultValue
-            }
-        }
-        
-        public var defaults : UserDefaults {
-            return proxyValue.defaults
-        }
-        
-        public var defaultDescription: String?
-        
-        public var observer: ObserverCallback? {
-            didSet {
-                setupProxyObserver()
-            }
-        }
-        
-        public func invalidate() {
-            observer = nil
-            proxyValue.remove()
-            proxyValue.invalidate()
-        }
-
-        public func destroy() {
-            invalidate()
-            proxyValue.destroy()
-        }
-
-        let defaultValue : T
-        var proxyValue : Value<T>
-        
-        func proxyObserver(_ key: String, _ value: T?) {
-            observer?(key, value ?? defaultValue)
-        }
-        
-        func setupProxyObserver() {
-            if observer == nil {
-                proxyValue.remove()
-            } else {
-                proxyValue.observer = proxyObserver
-            }
-        }
-            
-        init(value: Value<T>, defaultValue: T) {
-            self.defaultValue = defaultValue
-            self.proxyValue = value
-            self.observer = nil
-            
-            proxyValue.remove()
+    class DefaultedValue<T> : TransformedValue<T, T?> {
+        init?(proxyClosure: ()->AnyValue<T?>,
+              defaultValue: T,
+              observer: ((String, T) -> Void)? = nil) {
+            super.init(proxyClosure: proxyClosure,
+                       encoder: { $0 },
+                       decoder: { $0 ?? defaultValue })
         }
     }
-    
+
     func defaultValue<T: NativeType>(_ defaultValue: T,
-                                     for key: String) -> DefaultedValue<T> {
-        let value = Value<T>(key: key, defaults: self)
-        return DefaultedValue(value: value, defaultValue: defaultValue)
+                                     for key: String,
+                                     observer: ((String, T)->Void)? = nil) -> DefaultedValue<T>? {
+        guard let proxy = NativeValue<T>(key: key,
+                                         defaults: self) else {
+            return nil
+        }
+        return DefaultedValue<T>(proxyClosure: { return proxy.erased() },
+                                 defaultValue: defaultValue,
+                                 observer: observer)
+    }
+
+    func defaulted<T>(proxy: AnyValue<T?>,
+                      defaultValue: T,
+                      observer: ((String, T)->Void)? = nil) -> DefaultedValue<T>? {
+        return DefaultedValue<T>(proxyClosure: { return proxy },
+                                 defaultValue: defaultValue,
+                                 observer: observer)
+
     }
 }
 
-public func << <T>(lhs: SwiftDefaults.DefaultedValue<T>,
-                   rhs: T) {
+public func << <T>(_ lhs: SwiftDefaults.DefaultedValue<T>, _ rhs: T) {
     lhs.value = rhs
 }
-

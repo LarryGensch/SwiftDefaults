@@ -7,20 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B9D434FC225E1269006CCA66 /* TransformedValueProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D434FB225E1269006CCA66 /* TransformedValueProtocol.swift */; };
 		E03AEC77224529E2001DABF1 /* SwiftDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E03AEC6D224529E2001DABF1 /* SwiftDefaults.framework */; };
 		E03AEC7C224529E2001DABF1 /* SwiftDefaults+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC7B224529E2001DABF1 /* SwiftDefaults+Tests.swift */; };
 		E03AEC7E224529E2001DABF1 /* SwiftDefaults.h in Headers */ = {isa = PBXBuildFile; fileRef = E03AEC70224529E2001DABF1 /* SwiftDefaults.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E03AEC9022452AC8001DABF1 /* ValueConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8822452AC8001DABF1 /* ValueConverter.swift */; };
-		E03AEC9122452AC8001DABF1 /* ConvertibleProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8922452AC8001DABF1 /* ConvertibleProtocol.swift */; };
 		E03AEC9222452AC8001DABF1 /* NativeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8A22452AC8001DABF1 /* NativeType.swift */; };
 		E03AEC9322452AC8001DABF1 /* ArrayValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8C22452AC8001DABF1 /* ArrayValue.swift */; };
 		E03AEC9422452AC8001DABF1 /* EnumValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8D22452AC8001DABF1 /* EnumValue.swift */; };
 		E03AEC9522452AC8001DABF1 /* CodableValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8E22452AC8001DABF1 /* CodableValue.swift */; };
-		E03AEC9622452AC8001DABF1 /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03AEC8F22452AC8001DABF1 /* Value.swift */; };
 		E04294222245660200B9AA6D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = E04294212245660200B9AA6D /* README.md */; };
 		E04294242245660C00B9AA6D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = E04294232245660C00B9AA6D /* LICENSE */; };
 		E04294272245B58300B9AA6D /* SwiftDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04294262245B58300B9AA6D /* SwiftDefaults.swift */; };
-		E0429443224FD7A100B9AA6D /* DefaultedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0429442224FD7A100B9AA6D /* DefaultedValue.swift */; };
+		E0C3C2D22258F58500CDC1EA /* BaseValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C3C2D12258F58500CDC1EA /* BaseValue.swift */; };
+		E0C3C2D6225908B500CDC1EA /* ValueProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C3C2D5225908B500CDC1EA /* ValueProtocol.swift */; };
+		E0C3C2D82259092E00CDC1EA /* NativeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C3C2D72259092E00CDC1EA /* NativeValue.swift */; };
+		E0C3C2DA2259098500CDC1EA /* TransformedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C3C2D92259098500CDC1EA /* TransformedValue.swift */; };
+		E0C3C2DC225909E000CDC1EA /* DefaultedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C3C2DB225909E000CDC1EA /* DefaultedValue.swift */; };
+		E0C3C2DE2259143600CDC1EA /* ValueFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C3C2DD2259143600CDC1EA /* ValueFactory.swift */; };
+		E0C3C2E0225A2AA400CDC1EA /* AnyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C3C2DF225A2AA400CDC1EA /* AnyValue.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,23 +38,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B9D434FB225E1269006CCA66 /* TransformedValueProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformedValueProtocol.swift; sourceTree = "<group>"; };
 		E03AEC6D224529E2001DABF1 /* SwiftDefaults.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftDefaults.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E03AEC70224529E2001DABF1 /* SwiftDefaults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftDefaults.h; sourceTree = "<group>"; };
 		E03AEC71224529E2001DABF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E03AEC76224529E2001DABF1 /* SwiftDefaultsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftDefaultsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E03AEC7B224529E2001DABF1 /* SwiftDefaults+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftDefaults+Tests.swift"; sourceTree = "<group>"; };
 		E03AEC7D224529E2001DABF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E03AEC8822452AC8001DABF1 /* ValueConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueConverter.swift; sourceTree = "<group>"; };
-		E03AEC8922452AC8001DABF1 /* ConvertibleProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConvertibleProtocol.swift; sourceTree = "<group>"; };
 		E03AEC8A22452AC8001DABF1 /* NativeType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeType.swift; sourceTree = "<group>"; };
 		E03AEC8C22452AC8001DABF1 /* ArrayValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayValue.swift; sourceTree = "<group>"; };
 		E03AEC8D22452AC8001DABF1 /* EnumValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumValue.swift; sourceTree = "<group>"; };
 		E03AEC8E22452AC8001DABF1 /* CodableValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodableValue.swift; sourceTree = "<group>"; };
-		E03AEC8F22452AC8001DABF1 /* Value.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Value.swift; sourceTree = "<group>"; };
 		E04294212245660200B9AA6D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		E04294232245660C00B9AA6D /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = SOURCE_ROOT; };
 		E04294262245B58300B9AA6D /* SwiftDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDefaults.swift; sourceTree = "<group>"; };
-		E0429442224FD7A100B9AA6D /* DefaultedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultedValue.swift; sourceTree = "<group>"; };
+		E0C3C2D12258F58500CDC1EA /* BaseValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseValue.swift; sourceTree = "<group>"; };
+		E0C3C2D5225908B500CDC1EA /* ValueProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueProtocol.swift; sourceTree = "<group>"; };
+		E0C3C2D72259092E00CDC1EA /* NativeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeValue.swift; sourceTree = "<group>"; };
+		E0C3C2D92259098500CDC1EA /* TransformedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformedValue.swift; sourceTree = "<group>"; };
+		E0C3C2DB225909E000CDC1EA /* DefaultedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultedValue.swift; sourceTree = "<group>"; };
+		E0C3C2DD2259143600CDC1EA /* ValueFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueFactory.swift; sourceTree = "<group>"; };
+		E0C3C2DF225A2AA400CDC1EA /* AnyValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValue.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,25 +122,29 @@
 		E03AEC8722452AC8001DABF1 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				E03AEC8B22452AC8001DABF1 /* Convertibles */,
-				E03AEC8922452AC8001DABF1 /* ConvertibleProtocol.swift */,
-				E0429442224FD7A100B9AA6D /* DefaultedValue.swift */,
+				E03AEC8B22452AC8001DABF1 /* Transformables */,
+				E0C3C2DF225A2AA400CDC1EA /* AnyValue.swift */,
+				E0C3C2D12258F58500CDC1EA /* BaseValue.swift */,
+				E0C3C2DB225909E000CDC1EA /* DefaultedValue.swift */,
 				E03AEC8A22452AC8001DABF1 /* NativeType.swift */,
+				E0C3C2D72259092E00CDC1EA /* NativeValue.swift */,
 				E04294262245B58300B9AA6D /* SwiftDefaults.swift */,
-				E03AEC8F22452AC8001DABF1 /* Value.swift */,
-				E03AEC8822452AC8001DABF1 /* ValueConverter.swift */,
+				E0C3C2D92259098500CDC1EA /* TransformedValue.swift */,
+				B9D434FB225E1269006CCA66 /* TransformedValueProtocol.swift */,
+				E0C3C2DD2259143600CDC1EA /* ValueFactory.swift */,
+				E0C3C2D5225908B500CDC1EA /* ValueProtocol.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
 		};
-		E03AEC8B22452AC8001DABF1 /* Convertibles */ = {
+		E03AEC8B22452AC8001DABF1 /* Transformables */ = {
 			isa = PBXGroup;
 			children = (
 				E03AEC8C22452AC8001DABF1 /* ArrayValue.swift */,
 				E03AEC8E22452AC8001DABF1 /* CodableValue.swift */,
 				E03AEC8D22452AC8001DABF1 /* EnumValue.swift */,
 			);
-			path = Convertibles;
+			path = Transformables;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -246,15 +258,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0C3C2D82259092E00CDC1EA /* NativeValue.swift in Sources */,
 				E03AEC9422452AC8001DABF1 /* EnumValue.swift in Sources */,
-				E0429443224FD7A100B9AA6D /* DefaultedValue.swift in Sources */,
 				E03AEC9222452AC8001DABF1 /* NativeType.swift in Sources */,
-				E03AEC9622452AC8001DABF1 /* Value.swift in Sources */,
 				E03AEC9522452AC8001DABF1 /* CodableValue.swift in Sources */,
+				B9D434FC225E1269006CCA66 /* TransformedValueProtocol.swift in Sources */,
 				E04294272245B58300B9AA6D /* SwiftDefaults.swift in Sources */,
-				E03AEC9022452AC8001DABF1 /* ValueConverter.swift in Sources */,
-				E03AEC9122452AC8001DABF1 /* ConvertibleProtocol.swift in Sources */,
+				E0C3C2D6225908B500CDC1EA /* ValueProtocol.swift in Sources */,
+				E0C3C2E0225A2AA400CDC1EA /* AnyValue.swift in Sources */,
+				E0C3C2DE2259143600CDC1EA /* ValueFactory.swift in Sources */,
+				E0C3C2DC225909E000CDC1EA /* DefaultedValue.swift in Sources */,
+				E0C3C2D22258F58500CDC1EA /* BaseValue.swift in Sources */,
 				E03AEC9322452AC8001DABF1 /* ArrayValue.swift in Sources */,
+				E0C3C2DA2259098500CDC1EA /* TransformedValue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
