@@ -21,7 +21,6 @@ public extension SwiftDefaults {
         public override var observer: ((String, T?) -> Void)? {
             didSet {
                 let name = (observer == nil) ? "nil" : "something"
-                print("Observer didSet \(name) on \(self)")
             }
         }
         public var _isDestroyed = false
@@ -83,13 +82,9 @@ public extension SwiftDefaults {
                 let value = self.value
                 count += 1
                 let myCount = count
-                print("Captured observer \(count)")
                 observerQueue.async {
-                    print("Calling observer \(myCount)")
                     observer(key, value)
                 }
-            } else {
-                print("** No observer for \(self)")
             }
         }
 

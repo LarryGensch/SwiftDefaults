@@ -332,11 +332,23 @@ to transform any object conforming to `Codable` into a value supported by `UserD
         var b : String
     }
 
-    let value = swiftDefaults.codableValue(for: Foo.self, key: ourKey) 
+    let value = swiftDefaults.codableValue(for: Foo.self, key: "key"") 
 
     value << Foo(a: 1, b: "one")
 
-The encoder/decoder used by `CodeableValue` transforms the object into a `Data` object using JSON (by default). The `CoderType` enum allows you to specify JSON or Property List.
+The encoder/decoder used by `CodeableValue` transforms the object into a `Data` object using JSON (by default).
+
+If you would prefer that the data stored in `UserDefaults` be stored as a property
+list instead of a JSON object, you can use the `CoderType` enum:
+
+    let value = swiftDefaults.codableValue(for: Foo.self,
+                                           key: "key",
+                                           coderType: .pList)
+
+The `CoderType` enum allows you to specify JSON or Property List.
+Hopefully, there will be support for user-supplied encoders and decoders.
+The code has been written, but has not been tested, so it's currently commented
+out until I have time to ensure the code actually works as designed.
 
 ## ArrayValue
 
@@ -417,7 +429,7 @@ That seems terribly verbose. However, that could be shortened to:
                                                       defaults: defaults,
                                                       observer: nil)
 
-And we one again, have a runtime error.
+And we once again, have a runtime error.
 
 Of course, changing the `try!` to a `try?` in the above example would allow us to use
 optional chaining to, perhaps put the `let` statement into a `guard` or `if let`
@@ -428,7 +440,7 @@ but I considered this overkill. Why? Because there was only one condition that w
 cause the exception to be thrown: When a shadow `Value` object for a key was
 associated with a differing type than the existing `Value` object for the same key.
 
-Since there was only one failure reason, it made sent to me that instead of having
+Since there was only one failure mode, it made sense to me that instead of having
 an initializer that throws an exception, simply use a failable initializer, which would
 be equivalent to the `try?` for optional chaining:
 

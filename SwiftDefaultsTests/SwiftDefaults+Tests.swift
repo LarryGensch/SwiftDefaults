@@ -21,13 +21,11 @@ class SwiftDefaults_Tests: XCTestCase {
     
     // Ensure tests start up with clean UserDefaults
     override func setUp() {
-        print("SETUP()")
         swiftDefaults.destroyAll(except: [saveKey])
         SwiftDefaults.isTesting = true
     }
     
     override func tearDown() {
-        print("TEARDOWN()")
         swiftDefaults.destroyAll(except: [saveKey])
     }
     
@@ -394,7 +392,6 @@ class SwiftDefaults_Tests: XCTestCase {
         let observer : (Any,Any)->Void = { (_, _) in
             XCTAssert(Thread.current.isMainThread)
             count += 1
-            print("Count is now \(count)")
         }
         
         let value1 : [Foo] = [ .a, .c, .e ]
@@ -668,34 +665,5 @@ class SwiftDefaults_Tests: XCTestCase {
         }
         wait(for: [bgExpectation], timeout: 5)
         XCTAssertEqual(count, 2)
-    }
-
-    class MyCoder : SwiftDefaults.Coder {
-        func encode<T>(_ value: T) throws -> Data where T : Encodable {
-            // ...
-        }
-
-        func decode<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
-            // ...
-        }
-    }
-
-    func other() {
-        struct Foo : Codable {
-            var a: Int
-            var b: String
-        }
-        let coderType = SwiftDefaults.CoderType.custom(encoder: { (value) -> Data in
-            // ...
-            return Data()
-        },
-                                                       decoder: { (type, data) -> Foo in
-            // ...
-            return Foo(a: 1, b: "")
-        })
-        let value = swiftDefaults
-            .codableValue(for: Foo.self,
-                          key: "key",
-                          coderType: coderType)
     }
 }
